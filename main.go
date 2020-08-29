@@ -11,14 +11,14 @@ func main() {
 	fmt.Println("customer service")
 	err := task.OpenConnection()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("NO Connection", err)
 		return
 	}
 	defer task.DB.Close()
 
 	err = task.CreateCustomer()
 	if err != nil {
-		fmt.Println("cannot create customer table", err)
+		log.Fatal("cannot create customer table", err)
 		return
 	}
 
