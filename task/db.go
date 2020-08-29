@@ -66,16 +66,15 @@ func queryAllCustomer() []Customer {
 	return custs
 }
 
-func insertCustomer(c *Customer) *Customer {
+func insertCustomer(c *Customer) (*Customer, error) {
 	row := DB.QueryRow("INSERT INTO customer (name, email, status) values ($1, $2, $3)  RETURNING id;", c.Name, c.Email, c.Status)
 
 	var id int
 	err := row.Scan(&id)
 	if err != nil {
-		fmt.Println("can't scan id", err)
-		return nil
+		return nil, err
 	}
-	return &Customer{id, c.Name, c.Email, c.Status}
+	return &Customer{id, c.Name, c.Email, c.Status}, nil
 }
 
 func queryByID(id int) (*Customer, error) {

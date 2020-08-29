@@ -1,6 +1,7 @@
 package task
 
 import (
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -55,14 +56,11 @@ func PostCustomersHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	cIN := insertCustomer(&cust)
-	if cIN != nil {
-		// b, err := json.Marshal(*cIN)
-		// if err != nil {
-		// 	c.JSON(http.StatusInternalServerError, err.Error())
-		// 	return
-		// }
+	cIN, err := insertCustomer(&cust)
+	if err == nil {
 		c.JSON(http.StatusCreated, *cIN)
+	} else {
+		c.JSON(http.StatusInternalServerError, err)
 	}
 
 }
@@ -74,17 +72,22 @@ func UpdateCustomersHandler(c *gin.Context) {
 		return
 	}
 
-	cust, err := queryByID(id)
+	_, err = queryByID(id)
 	var cu Customer
-	if cust != nil {
+	if err == nil {
 		if err := c.ShouldBindJSON(&cu); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 		cu.ID = id
 		updateCustomer(&cu)
+		c.JSON(http.StatusOK, cu)
+	} else if err == sql.ErrNoRows {
+		c.JSON(http.StatusOK, gin.H{"warning": "Cust id NOT FOUND"})
+
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
-	c.JSON(http.StatusOK, cu)
 }
 
 func DeleteCustomersHandler(c *gin.Context) {
