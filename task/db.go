@@ -23,7 +23,7 @@ func OpenConnection() (err error) {
 	return
 }
 
-func createCustomer() {
+func CreateCustomer() (err error) {
 	createTb := `
 	CREATE TABLE IF NOT EXISTS customer (
 		id SERIAL PRIMARY KEY,
@@ -32,13 +32,12 @@ func createCustomer() {
 		status TEXT
 	);
 	`
-	_, err := DB.Exec(createTb)
+	_, err = DB.Exec(createTb)
 
-	if err != nil {
-		log.Fatal("can't create table", err)
+	if err == nil {
+		log.Println("create table success")
 	}
-
-	log.Println("create table success")
+	return
 }
 
 func queryAllCustomer() []Customer {

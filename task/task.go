@@ -14,8 +14,6 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Auth)
 
-	createCustomer()
-
 	r.GET("/customers", GetCustomersHandler)
 	r.GET("/customers/:id", GetCustomersByIDHandler)
 
@@ -42,7 +40,6 @@ func GetCustomersByIDHandler(c *gin.Context) {
 
 	cust, err := queryByID(id)
 	if err != nil {
-		// DO NOT return NIL in restAPI --> not recommended
 		c.JSON(http.StatusOK, gin.H{})
 		return
 	}
@@ -84,7 +81,6 @@ func UpdateCustomersHandler(c *gin.Context) {
 		c.JSON(http.StatusOK, cu)
 	} else if err == sql.ErrNoRows {
 		c.JSON(http.StatusOK, gin.H{"warning": "Cust id NOT FOUND"})
-
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}

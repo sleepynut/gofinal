@@ -16,6 +16,12 @@ func main() {
 	}
 	defer task.DB.Close()
 
+	err = task.CreateCustomer()
+	if err != nil {
+		fmt.Println("cannot create customer table", err)
+		return
+	}
+
 	r := task.SetupRouter()
 	r.Run(":2009")
 }
