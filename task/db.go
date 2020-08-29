@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	// _ "github.com/lib/pq"
 )
 
 var DB *sql.DB
@@ -17,12 +16,6 @@ type Customer struct {
 	Status string `json:"status"`
 }
 
-type Todo struct {
-	ID     int    `json:"id"`
-	Title  string `json:"title"`
-	Status string `json:"status"`
-}
-
 func OpenConnection() (err error) {
 	// url := "postgres://peoqxscq:o8KzOLhBc8U2tOjVkXN3g2Aj4iVSARXq@satao.db.elephantsql.com:5432/peoqxscq"
 	url := os.Getenv("DATABASE_URL")
@@ -30,7 +23,7 @@ func OpenConnection() (err error) {
 	return
 }
 
-func CreateCustomer() {
+func createCustomer() {
 	createTb := `
 	CREATE TABLE IF NOT EXISTS customer (
 		id SERIAL PRIMARY KEY,
@@ -39,12 +32,6 @@ func CreateCustomer() {
 		status TEXT
 	);
 	`
-
-	// db.Exec means to execute the given SQL
-	// w/o any result|state from the result
-	// following the execution
-	// however the PLACEHOLDER is used to track
-	// number of rows AFFECTED from the execution
 	_, err := DB.Exec(createTb)
 
 	if err != nil {
@@ -77,31 +64,6 @@ func queryAllCustomer() []Customer {
 	}
 	fmt.Println("query all customer success")
 	return custs
-}
-
-func queryFilteredTodo(stat string) []Todo {
-	stmt, err := DB.Prepare("select * from customer where status=$1")
-	if err != nil {
-		log.Fatal("can't prepare query all customer statement", err)
-	}
-
-	rows, err := stmt.Query(stat)
-	if err != nil {
-		log.Fatal("can't query all customer", err)
-	}
-
-	var items []Todo
-	var td Todo
-
-	for rows.Next() {
-		if err := rows.Scan(&td.ID, &td.Title, &td.Status); err != nil {
-			log.Fatal("can't scane row into id,title,status", err)
-			continue
-		}
-		items = append(items, td)
-	}
-	fmt.Println("query filtered customer success")
-	return items
 }
 
 func insertCustomer(c *Customer) *Customer {

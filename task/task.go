@@ -13,7 +13,7 @@ func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Auth)
 
-	// CreateCustomer()
+	createCustomer()
 
 	r.GET("/customers", GetCustomersHandler)
 	r.GET("/customers/:id", GetCustomersByIDHandler)
