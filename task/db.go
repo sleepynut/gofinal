@@ -43,7 +43,7 @@ func createCustomer() {
 
 func queryAllCustomer() []Customer {
 	stmt, err := DB.Prepare("select * from customer")
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		log.Fatal("can't prepare query all customer statement", err)
 	}
 
